@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marmoris | AI-Native Code Reviews</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#0099ff',
+                            yellow: '#fde047',
+                        }
+                    },
+                    boxShadow: {
+                        'hero': '0 20px 40px -10px rgba(0, 0, 0, 0.1), 0 0 20px -10px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Typography Utilities */
+        .text-balance { text-wrap: balance; }
+        .text-pretty { text-wrap: pretty; }
+
+        /* Custom Scrollbar for the mock UI */
+        .mock-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .mock-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .mock-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #e5e7eb;
+            border-radius: 20px;
+        }
+
+        /* Animation keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+                filter: blur(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Animation classes */
+        .animate-fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+        }
+
+        .animate-fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+        }
+
+        .animate-scale-in {
+            opacity: 0;
+            animation: scaleIn 1s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+        }
+
+        /* Delays */
+        .delay-0 { animation-delay: 0ms; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+        .delay-700 { animation-delay: 700ms; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .animate-fade-in-up, .animate-fade-in, .animate-scale-in {
+                animation: none;
+                opacity: 1;
+                transform: none;
+                filter: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 antialiased overflow-x-hidden">
+
+    <!-- Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-transparent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 animate-fade-in delay-0">
+                <!-- Left: Logo & Links -->
+                <div class="flex items-center gap-8">
+                    <a href="#" class="flex-shrink-0">
+                        <!-- Logo Icon -->
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-black">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="currentColor"/>
+                            <path d="M11 7H13V17H11V7Z" fill="white"/>
+                            <path d="M7 11H17V13H7V11Z" fill="white"/>
+                        </svg>
+                    </a>
+                    <nav class="hidden md:flex gap-6">
+                        <a href="#" class="text-sm font-medium text-[#475569] hover:text-gray-600 transition-colors">Features</a>
+                        <a href="#" class="text-sm font-medium text-[#475569] hover:text-gray-600 transition-colors">Pricing</a>
+                    </nav>
+                </div>
+
+                <!-- Right: Auth Buttons -->
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-sm font-medium text-[#475569] hover:text-gray-900 transition-colors">Login</a>
+                    <a href="#" class="text-sm font-medium bg-brand-blue text-white px-4 py-2 rounded-lg hover:bg-[#3b82f6] transition-colors shadow-sm">Get started</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Hero Section -->
+    <main class="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            
+            <!-- Headline -->
+            <h1 class="text-balance text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-gray-900 mb-8 animate-fade-in-up delay-100 leading-[1.1]">
+                Ship 10x faster 
+                <span class="relative inline-block px-2 ml-1">
+                    <span class="absolute inset-0 bg-[#fde047] -skew-y-1 rounded-sm transform origin-bottom-left"></span>
+                    <span class="relative z-10">with AI context</span>
+                </span>
+            </h1>
+
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 animate-fade-in-up delay-200">
+                <a href="#" class="w-full sm:w-auto px-8 py-3.5 bg-brand-blue text-white text-base font-medium rounded-lg hover:bg-[#3b82f6] transition-all shadow-md hover:shadow-lg text-center">
+                    Get started
+                </a>
+                <a href="#" class="w-full sm:w-auto px-8 py-3.5 bg-white text-gray-700 border border-gray-200 text-base font-medium rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Watch Demo
+                </a>
+            </div>
+
+            <!-- Update Text -->
+            <div class="flex items-center justify-center gap-2 text-sm text-gray-500 animate-fade-in-up delay-300 mb-16">
+                <span class="text-gray-400">✦</span>
+                <p>Coming soon: Dependency-aware risk analysis for confident shipping.</p>
+            </div>
+
+            <!-- App Interface Mockup -->
+            <div class="relative max-w-[1200px] mx-auto animate-scale-in delay-400">
+                <div class="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col md:flex-row h-[700px] md:h-[800px] text-left">
+                    
+                    <!-- Sidebar (Left) -->
+                    <div class="hidden md:flex w-64 bg-[#F9FAFB] border-r border-gray-200 flex-col flex-shrink-0">
+                        <!-- Sidebar Header -->
+                        <div class="p-4 flex items-center justify-between">
+                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center text-red-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Nav -->
+                        <div class="flex-1 overflow-y-auto px-3 py-2 space-y-6 mock-scrollbar">
+                            <!-- Section 1 -->
+                            <div class="space-y-1">
+                                <div class="px-2 text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Yesterday</div>
+                                <div class="flex items-center justify-between px-2 py-1.5 bg-gray-200/60 rounded-md text-sm font-medium text-gray-900 cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]">↻</div>
+                                        <span>PR #412: Auth Fix</span>
+                                    </div>
+                                    <span class="text-gray-400 text-xs">34</span>
+                                </div>
+                                <div class="flex items-center justify-between px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded bg-red-100 text-red-600 flex items-center justify-center text-[10px]">A</div>
+                                        <span>marmoris.ai</span>
+                                    </div>
+                                    <span class="text-gray-400 text-xs">41</span>
+                                </div>
+                            </div>
+
+                            <!-- Section 2 -->
+                            <div class="space-y-1">
+                                <div class="px-2 text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Last week</div>
+                                <div class="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Security Patch</span>
+                                </div>
+                                <div class="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span>Dependency Map</span>
+                                </div>
+                            </div>
+
+                            <!-- Section 3 -->
+                            <div class="space-y-1">
+                                <div class="px-2 text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Previous 30 days</div>
+                                <div class="flex items-center gap-2 px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Risk Analysis</span>
+                                </div>
+                                <div class="flex items-center justify-between px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded bg-orange-100 text-orange-600 flex items-center justify-center text-[10px]">↻</div>
+                                        <span>Reviews</span>
+                                    </div>
+                                    <span class="text-gray-400 text-xs">29</span>
+                                </div>
+                                <div class="flex items-center justify-between px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]">↻</div>
+                                        <span>Reviewer: Sarah</span>
+                                    </div>
+                                    <span class="text-gray-400 text-xs">2</span>
+                                </div>
+                                <div class="flex items-center justify-between px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded bg-green-100 text-green-600 flex items-center justify-center text-[10px]">∞</div>
+                                        <span>marmoris.ai</span>
+                                    </div>
+                                    <span class="text-gray-400 text-xs">3</span>
+                                </div>
+                                <div class="flex items-center justify-between px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded bg-yellow-100 text-yellow-600 flex items-center justify-center text-[10px]">●</div>
+                                        <span>PR #413</span>
+                                    </div>
+                                    <span class="text-gray-400 text-xs">1</span>
+                                </div>
+                                <div class="flex items-center justify-between px-2 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md cursor-pointer">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px]">●</div>
+                                        <span>PR #414</span>
+                                    </div>
+                                    <span class="text-gray-400 text-xs">2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Area (Right) -->
+                    <div class="flex-1 flex flex-col bg-white overflow-hidden">
+                        <!-- Content Header -->
+                        <div class="h-14 border-b border-gray-100 flex items-center justify-between px-6 md:px-10">
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <div class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px]">↻</div>
+                                <span class="font-medium text-gray-900">Week Kickoff</span>
+                                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs text-gray-400">Updated 49 minutes ago</span>
+                                <div class="flex -space-x-1">
+                                    <img src="https://placehold.co/24x24" alt="User" class="w-6 h-6 rounded-full border border-white">
+                                    <img src="https://placehold.co/24x24" alt="User" class="w-6 h-6 rounded-full border border-white">
+                                    <div class="w-6 h-6 rounded-full bg-gray-200 border border-white flex items-center justify-center text-[10px] text-gray-600">A</div>
+                                </div>
+                                <button class="bg-brand-blue text-white text-xs font-medium px-3 py-1.5 rounded hover:bg-[#3b82f6] transition-colors">Share</button>
+                            </div>
+                        </div>
+
+                        <!-- Scrollable Content -->
+                        <div class="flex-1 overflow-y-auto p-6 md:p-10 mock-scrollbar">
+                            <div class="max-w-3xl mx-auto">
+                                <!-- Title -->
+                                <h2 class="text-2xl font-bold text-gray-900 mb-4">Week Kickoff</h2>
+                                
+                                <!-- Summary Paragraph -->
+                                <p class="text-gray-700 text-sm leading-relaxed mb-8 text-pretty">
+                                    High risk detected in dependency flow. The proposed changes affect 14 downstream services. Risk analysis suggests validating token expiration logic in the middleware layer.
+                                </p>
+
+                                <!-- Risk Analysis Section -->
+                                <div class="mb-10">
+                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Timeline</h3>
+                                    
+                                    <div class="relative border-l-2 border-gray-100 ml-1.5 space-y-6">
+                                        <!-- Timeline Item 1 -->
+                                        <div class="relative pl-6">
+                                            <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-200 border-2 border-white"></div>
+                                            <div class="flex justify-between items-start group">
+                                                <p class="text-sm text-gray-800 leading-snug">Detected circular dependency in auth/service.ts</p>
+                                                <span class="text-xs text-gray-400 whitespace-nowrap ml-4 opacity-0 group-hover:opacity-100 transition-opacity">Mar 24, 16:45</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Timeline Item 2 -->
+                                        <div class="relative pl-6">
+                                            <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-200 border-2 border-white"></div>
+                                            <div class="flex justify-between items-start group">
+                                                <p class="text-sm text-gray-800 leading-snug">Security scan identified critical vulnerability in axios@1.6.0</p>
+                                                <span class="text-xs text-gray-400 whitespace-nowrap ml-4 opacity-0 group-hover:opacity-100 transition-opacity">Mar 24, 16:45</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Timeline Item 3 -->
+                                        <div class="relative pl-6">
+                                            <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-200 border-2 border-white"></div>
+                                            <div class="flex justify-between items-start group">
+                                                <p class="text-sm text-gray-800 leading-snug">Dependency-aware navigation: 14 affected files mapped</p>
+                                                <span class="text-xs text-gray-400 whitespace-nowrap ml-4 opacity-0 group-hover:opacity-100 transition-opacity">Mar 17, 17:00</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Timeline Item 4 -->
+                                        <div class="relative pl-6">
+                                            <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-200 border-2 border-white"></div>
+                                            <div class="flex justify-between items-start group">
+                                                <p class="text-sm text-gray-800 leading-snug">Automated risk score: 8.5/10 (High Impact)</p>
+                                                <span class="text-xs text-gray-400 whitespace-nowrap ml-4 opacity-0 group-hover:opacity-100 transition-opacity">Mar 17, 17:00</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Timeline Item 5 -->
+                                        <div class="relative pl-6">
+                                            <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-200 border-2 border-white"></div>
+                                            <div class="flex justify-between items-start group">
+                                                <p class="text-sm text-gray-800 leading-snug">Reviewer context loaded: Previous similar bug in PR #382</p>
+                                                <span class="text-xs text-gray-400 whitespace-nowrap ml-4 opacity-0 group-hover:opacity-100 transition-opacity">Mar 10, 17:00</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Timeline Item 6 -->
+                                        <div class="relative pl-6">
+                                            <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-200 border-2 border-white"></div>
+                                            <div class="flex justify-between items-start group">
+                                                <p class="text-sm text-gray-800 leading-snug">Static analysis complete: No syntax errors found</p>
+                                                <span class="text-xs text-gray-400 whitespace-nowrap ml-4 opacity-0 group-hover:opacity-100 transition-opacity">Mar 3, 16:45</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Actions / Security Alert Section -->
+                                <div>
+                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Actions</h3>
+                                    
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                                        <!-- Email Header -->
+                                        <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
+                                            <div class="flex items-center gap-2">
+                                                <div class="bg-blue-500 rounded text-white p-0.5">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                                </div>
+                                                <span class="text-xs font-medium text-gray-700">Email</span>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-xs text-gray-400">Send email</span>
+                                                <span class="text-gray-300">|</span>
+                                                <button class="text-gray-400 hover:text-gray-600">×</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Email Body -->
+                                        <div class="p-4 bg-white">
+                                            <div class="flex items-center gap-4 mb-3 text-sm">
+                                                <span class="text-gray-500 w-12">To</span>
+                                                <span class="text-gray-900">dev-ops@marmoris.ai</span>
+                                            </div>
+                                            <div class="flex items-center gap-4 mb-4 text-sm border-b border-gray-100 pb-3">
+                                                <span class="text-gray-500 w-12">Subject</span>
+                                                <span class="text-gray-900">critical auth bypass risk - PR #412</span>
+                                            </div>
+                                            
+                                            <div class="text-sm text-gray-800 space-y-4">
+                                                <p>hey team, Marmoris identified a high-risk dependency chain in this PR. Recommend reviewing the auth middleware carefully before shipping.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
